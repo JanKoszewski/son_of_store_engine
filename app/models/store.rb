@@ -11,13 +11,6 @@
 #  updated_at  :datetime        not null
 #
 
-
-
-
-
-
-
-
 # Represents a store that is owned by a particular user
 class Store < ActiveRecord::Base
   attr_accessible :name, :user_id, :slug, :description, :status
@@ -87,21 +80,40 @@ class Store < ActiveRecord::Base
     where(:slug => id.parameterize) unless id.blank?
   end
 
+  def add_user(email, commit)
+    if commit =~ /Admin/
+      add_admin_user(email)
+    else
+      add_stocker_user(email)
+    end
+  end
+
+  def add_stocker_user(email)
+    if user = User.find_by_email(email)
+      user.update_attributes(:role => "stocker")
+      users << user
+      StoreUsersMailer.new_stocker_email(user, self).deliver
+      return "stocker"
+    end
+  end
+
   def add_admin_user(email)
     if user = User.find_by_email(email)
+      user.update_attributes(:role => "admin")
       users << user
-      StoreAdminMailer.new_admin_email(user, self).deliver
+      StoreUsersMailer.new_admin_email(user, self).deliver
+      return "admin"
     end
   end
 
   def invite_new_user(email)
-    StoreAdminMailer.new_user_email(email, self).deliver
+    StoreUsersMailer.new_user_email(email, self).deliver
   end
 
-  def delete_admin_user(user_id)
+  def delete_store_user(user_id)
     user = User.find(user_id)
     StoreUser.find_by_user_id(user.id).destroy
-    StoreAdminMailer.delete_admin_email(user, self).deliver
+    StoreUsersMailer.delete_user_email(user, self).deliver
   end
 
   private

@@ -5,24 +5,19 @@ table.table.table-bordered
     th Name
     th Username
     th Email
-    th Admin Status
-    th Remove Admin
+    th Role
+    th Remove User
   - @users.each do |user|
     tr
       td = user.name 
       td = user.username
       td = user.email
-      td = "Admin"
+      td = user.role
       td 
-         = button_to 'Delete Admin', admin_user_path(@store, :user_id => user.id), :method => :delete, :class => 'btn btn-info', :confirm => "Are you sure you want to remove #{user.name} as an admin?"
+         = button_to "Delete #{user.role}", admin_user_path(@store, :user_id => user.id), :method => :delete, :class => 'btn btn-info', :confirm => "Are you sure you want to remove #{user.name} as an admin?"
 
 h4 Add New Administrator
 
-= form_tag admin_users_path(@store) do
+= render :partial => "admin_form"
 
-  div.field
-    = label_tag :email
-    = text_field_tag :email, params[:email]
-
-  div.actions
-    = submit_tag "Add Admin"
+= render :partial => "stocker_form"

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe User do
   let! (:user) { Fabricate(:user) }
   let! (:second_user) { Fabricate(:user) }
-  let! (:store) { Fabricate(:store, :users => [user]) }
+  let! (:store) { Fabricate(:store, :users => [user, second_user]) }
   let! (:product) { Fabricate(:product, :store => store) }
   let! (:cart) { Fabricate(:cart, :store => store) }
 
@@ -24,8 +24,6 @@ describe User do
     }
 
     before(:each) do
-      user.set_role('admin')
-      second_user.set_role('admin')
       visit products_path(store)
       login_as(user)
     end
@@ -67,6 +65,8 @@ describe User do
           fill_in "Email", :with => new_admin.email
           expect { click_button "Add Admin" }.to 
                   change{ store.users.count }.by(1)
+          expect { click_button "Add Admin" }.to 
+                  change{ user.role }.to("admin")                  
         end
 
         context "when a new store admin has been successfully added" do
@@ -89,11 +89,12 @@ describe User do
         it "allows an admin to delete any current store admin" do
           expect { click_button "Delete Admin" }.to 
                   change{ store.users.count }.by(1)
+          store.users.should_not include([user])
         end
 
         it "displays an 'admin deleted' message when an admin has been removed" do
           click_button "Delete Admin"
-          page.should have_content("Admin deleted")
+          page.should have_content("This page is for administrators only")
         end
 
         context "when a store admin has been deleted" do
