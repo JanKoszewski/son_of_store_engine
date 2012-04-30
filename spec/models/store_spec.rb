@@ -164,26 +164,26 @@ describe Store do
   end
 
   context "when a user is added as a new admin to the store" do
-    let! (:user) { Fabricate(:user, :role => "admin") }
-    let! (:store) { Fabricate(:store, :users => [user]) }
+    let! (:admin_user) { Fabricate(:admin_user) }
+    let! (:store) { Fabricate(:store, :users => [admin_user]) }
 
     it "emails user" do
       mailer = double("string")
-      StoreUsersMailer.stub(:new_admin_email).with(user, store).and_return mailer
+      StoreUsersMailer.stub(:new_admin_email).with(admin_user, store).and_return mailer
       mailer.should_receive(:deliver)
-      store.add_admin_user(user.email)
+      store.add_admin_user(admin_user.email)
     end
   end
 
   context "when a user is removed as an admin from the store" do
-    let! (:user) { Fabricate(:user, :role => "admin") }
-    let! (:store) { Fabricate(:store, :users => [user]) }
+    let! (:admin_user) { Fabricate(:admin_user) }
+    let! (:store) { Fabricate(:store, :users => [admin_user]) }
 
     it "emails user" do
       mailer = double("string")
-      StoreUsersMailer.stub(:delete_admin_email).with(user, store).and_return mailer
+      StoreUsersMailer.stub(:delete_admin_email).with(admin_user, store).and_return mailer
       mailer.should_receive(:deliver)
-      store.delete_admin_user(user.id)
+      store.delete_admin_user(admin_user.id)
     end
   end
 

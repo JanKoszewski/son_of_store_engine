@@ -82,7 +82,6 @@ class Store < ActiveRecord::Base
 
   def add_user(user)
     users << user
-    users.save
   end
 
   def admin_user?(user)
@@ -91,12 +90,6 @@ class Store < ActiveRecord::Base
 
   def stocker_user?(user)
     self.users.include?(user) && user.stocker?
-  end
-
-  def set_user_role(user)
-    # admin_role = Role.create(:name => "Admin")
-    user.roles << admin_role
-    self.users << user
   end
 
   def add_store_user(email, commit)
@@ -108,13 +101,9 @@ class Store < ActiveRecord::Base
   end
 
   def add_stocker_user(email)
-
-  end
-
-  def add_admin_user(email)
     if user = User.find_by_email(email)
-      user.update_attributes(:role => "stocker")
-      users << user
+      user.add_role(Role.stocker)
+      self.add_user(user)
       StoreUsersMailer.new_stocker_email(user, self).deliver
       return "stocker"
     end
@@ -122,8 +111,8 @@ class Store < ActiveRecord::Base
 
   def add_admin_user(email)
     if user = User.find_by_email(email)
-      user.update_attributes(:role => "admin")
-      users << user
+      user.add_role(Role.admin)
+      self.add_user(user)
       StoreUsersMailer.new_admin_email(user, self).deliver
       return "admin"
     end

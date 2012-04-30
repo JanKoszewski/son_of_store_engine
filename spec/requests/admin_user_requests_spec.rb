@@ -68,7 +68,7 @@ describe User do
           expect { click_button "Add Admin" }.to 
                   change{ store.users.count }.by(1)
           expect { click_button "Add Admin" }.to 
-                  change{ user.roles }.to include(role)                  
+                  change{ user.roles }.to include(Role.admin)                  
         end
 
         context "when a new store admin has been successfully added" do
