@@ -94,7 +94,7 @@ class Store < ActiveRecord::Base
   end
 
   def set_user_role(user)
-    admin_role = Role.create(:name => "Admin")
+    # admin_role = Role.create(:name => "Admin")
     user.roles << admin_role
     self.users << user
   end
@@ -108,6 +108,10 @@ class Store < ActiveRecord::Base
   end
 
   def add_stocker_user(email)
+
+  end
+
+  def add_admin_user(email)
     if user = User.find_by_email(email)
       user.update_attributes(:role => "stocker")
       users << user
@@ -139,6 +143,12 @@ class Store < ActiveRecord::Base
 
   def invite_new_user(email)
     StoreUsersMailer.new_user_email(email, self).deliver
+    if users.length > 1
+      StoreUser.find_by_user_id(user.id).destroy
+      StoreAdminMailer.delete_admin_email(user, self).deliver
+    else
+      false
+    end
   end
 
   private

@@ -3,8 +3,7 @@ require 'spec_helper'
 describe "Dashboard" do
   let!(:store) { Fabricate(:store) }
   let (:user) { Fabricate(:user) }
-  let (:role) { Fabricate(:role, :name => "admin") }
-  let (:admin_user) { Fabricate(:user, :roles => [role]) }
+  let (:admin_user) { Fabricate(:admin_user) }
   let (:product) { Fabricate(:product, :store => store) }
   let (:cart) { Fabricate(:cart, :store => store) }
   let (:order) { Fabricate(:order, :store => store) }
@@ -14,8 +13,10 @@ describe "Dashboard" do
   let! (:cancelled_order) { Fabricate(:order, :status => "cancelled", :store => store) }
   let! (:returned_order) { Fabricate(:order, :status => "returned", :store => store) }
   let (:address) { Fabricate(:address) }
+  let (:role) { Fabricate(:role, :name => 'admin') }
 
   before(:each) do
+    store.users << admin_user
     order.add_product(product)
     visit products_path(store)
     login_as(admin_user)
