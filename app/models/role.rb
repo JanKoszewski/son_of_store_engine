@@ -16,16 +16,20 @@ class Role < ActiveRecord::Base
 
   validates :name, :presence => true, :uniqueness => true
 
+
   def self.super_admin
-    @super_admin ||= Role.create(:name => SUPER_ADMIN)
+    super_admin ||= Role.create_role(SUPER_ADMIN)
   end
 
   def self.admin
-    @admin ||= Role.create(:name => ADMIN)
+    admin ||= Role.create_role(ADMIN)
   end
 
   def self.stocker
-    @stocker ||= Role.create(:name => STOCKER)
+    stocker ||= Role.create_role(STOCKER)
   end
 
+  def self.create_role(name)
+    role = Role.create(:name => name)
+  end
 end
