@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe User do
-  let! (:user) { Fabricate(:user) }
+  let! (:role) { Fabricate(:role, :name => "admin") }
+  let! (:user) { Fabricate(:user, :roles => [role]) }
   let! (:second_user) { Fabricate(:user) }
   let! (:store) { Fabricate(:store, :users => [user, second_user]) }
   let! (:product) { Fabricate(:product, :store => store) }
@@ -28,13 +29,13 @@ describe User do
       login_as(user)
     end
 
-    describe "the admin dashboard" do
+    describe "in the admin dashboard" do
       it "provides a button to add a new admin user" do
         visit admin_dashboard_path(store)
         page.should have_link "Manage Users"
       end
 
-      context "the manage users page" do
+      context "on the manage users page" do
         let!(:new_admin) { Fabricate(:user) }
 
         before(:each) do
@@ -42,11 +43,11 @@ describe User do
           click_link "Manage Users"
         end
 
-        it "allows an admin to make a new admin via a user's email address" do
+        it "create a new admin by entering a user's email address" do
           page.should have_content("Add New Administrator")
         end
 
-        context "when an admin who is not a valid sonofstoreengine user is added" do
+        context "when an user who is not a valid sonofstoreengine user is added" do
           before(:each) do
             fill_in "Email", :with => "bogusemailaddress@email123.com"
           end
@@ -66,7 +67,7 @@ describe User do
           expect { click_button "Add Admin" }.to 
                   change{ store.users.count }.by(1)
           expect { click_button "Add Admin" }.to 
-                  change{ user.role }.to("admin")                  
+                  change{ user.roles }.to include(role)                  
         end
 
         context "when a new store admin has been successfully added" do
@@ -83,23 +84,23 @@ describe User do
         end
 
         it "allows an admin to delete another admin" do
-          page.should have_content("Remove Admin")
+          page.should have_content("Delete admin")
         end
 
         it "allows an admin to delete any current store admin" do
-          expect { click_button "Delete Admin" }.to 
+          expect { click_button "Delete admin" }.to 
                   change{ store.users.count }.by(1)
           store.users.should_not include([user])
         end
 
         it "displays an 'admin deleted' message when an admin has been removed" do
-          click_button "Delete Admin"
+          click_button "Delete admin"
           page.should have_content("This page is for administrators only")
         end
 
         context "when a store admin has been deleted" do
           it "notifies the deleted admin that they have been removed via email" do
-            expect {click_button "Delete Admin" }.to change(ActionMailer::Base.deliveries, :size).by(1)
+            expect {click_button "Delete admin" }.to change(ActionMailer::Base.deliveries, :size).by(1)
           end
         end
       end

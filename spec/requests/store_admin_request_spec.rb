@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe 'Store Admin' do
-  let!(:admin) { Fabricate(:user, :role => 'admin') }
+  let (:role) { Fabricate(:role, :name => "admin") }
+  let (:admin) { Fabricate(:user, :roles => [role]) }
   let!(:user) { Fabricate(:user) }
 
   let!(:stores) do

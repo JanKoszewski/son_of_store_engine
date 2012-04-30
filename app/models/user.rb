@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
   after_create :send_welcome_email
 
   def admin?
-    role == 'admin'
+    roles.map(&:name).include? 'admin'
   end
 
   def super_admin?
@@ -81,6 +81,10 @@ class User < ActiveRecord::Base
     role_ids.each do |role_id|
       self.roles << Role.find(role_id)
     end
+  end
+
+  def store_role(store, role)
+
   end
 
   def send_welcome_email

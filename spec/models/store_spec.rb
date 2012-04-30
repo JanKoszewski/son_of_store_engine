@@ -169,7 +169,7 @@ describe Store do
 
     it "emails user" do
       mailer = double("string")
-      StoreAdminMailer.stub(:new_admin_email).with(user, store).and_return mailer
+      StoreUsersMailer.stub(:new_admin_email).with(user, store).and_return mailer
       mailer.should_receive(:deliver)
       store.add_admin_user(user.email)
     end
@@ -181,7 +181,7 @@ describe Store do
 
     it "emails user" do
       mailer = double("string")
-      StoreAdminMailer.stub(:delete_admin_email).with(user, store).and_return mailer
+      StoreUsersMailer.stub(:delete_admin_email).with(user, store).and_return mailer
       mailer.should_receive(:deliver)
       store.delete_admin_user(user.id)
     end
@@ -193,7 +193,7 @@ describe Store do
 
     it "emails user" do
       mailer = double("string")
-      StoreAdminMailer.stub(:new_user_email).with(email, store).and_return mailer
+      StoreUsersMailer.stub(:new_user_email).with(email, store).and_return mailer
       mailer.should_receive(:deliver)
       store.invite_new_user(email)
     end

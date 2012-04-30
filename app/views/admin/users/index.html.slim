@@ -12,9 +12,9 @@ table.table.table-bordered
       td = user.name 
       td = user.username
       td = user.email
-      td = user.role
+      td = user.name
       td 
-         = button_to "Delete #{user.role}", admin_user_path(@store, :user_id => user.id), :method => :delete, :class => 'btn btn-info', :confirm => "Are you sure you want to remove #{user.name} as an admin?"
+         = button_to "Delete #{user.name}", admin_user_path(@store, :user_id => user.id), :method => :delete, :class => 'btn btn-info', :confirm => "Are you sure you want to remove #{user.name} as an admin?"
 
 h4 Add New Administrator
 

@@ -3,6 +3,8 @@ require 'spec_helper'
 describe "Dashboard" do
   let!(:store) { Fabricate(:store) }
   let (:user) { Fabricate(:user) }
+  let (:role) { Fabricate(:role, :name => "admin") }
+  let (:admin_user) { Fabricate(:user, :roles => [role]) }
   let (:product) { Fabricate(:product, :store => store) }
   let (:cart) { Fabricate(:cart, :store => store) }
   let (:order) { Fabricate(:order, :store => store) }
@@ -15,7 +17,6 @@ describe "Dashboard" do
 
   before(:each) do
     order.add_product(product)
-    admin_user = user.set_role('admin')
     visit products_path(store)
     login_as(admin_user)
     visit admin_dashboard_path(store)

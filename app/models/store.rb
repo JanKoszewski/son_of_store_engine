@@ -80,7 +80,26 @@ class Store < ActiveRecord::Base
     where(:slug => id.parameterize) unless id.blank?
   end
 
-  def add_user(email, commit)
+  def add_user(user)
+    users << user
+    users.save
+  end
+
+  def admin_user?(user)
+    self.users.include?(user) && user.admin?
+  end
+
+  def stocker_user?(user)
+    self.users.include?(user) && user.stocker?
+  end
+
+  def set_user_role(user)
+    admin_role = Role.create(:name => "Admin")
+    user.roles << admin_role
+    self.users << user
+  end
+
+  def add_store_user(email, commit)
     if commit =~ /Admin/
       add_admin_user(email)
     else
@@ -106,14 +125,20 @@ class Store < ActiveRecord::Base
     end
   end
 
-  def invite_new_user(email)
-    StoreUsersMailer.new_user_email(email, self).deliver
-  end
-
-  def delete_store_user(user_id)
+  def delete_admin_user(user_id)
     user = User.find(user_id)
     StoreUser.find_by_user_id(user.id).destroy
-    StoreUsersMailer.delete_user_email(user, self).deliver
+    StoreUsersMailer.delete_admin_email(user, self).deliver
+  end
+
+  def delete_stocker_user(user_id)
+    user = User.find(user_id)
+    StoreUser.find_by_user_id(user.id).destroy
+    StoreUsersMailer.delete_stocker_email(user, self).deliver
+  end
+
+  def invite_new_user(email)
+    StoreUsersMailer.new_user_email(email, self).deliver
   end
 
   private

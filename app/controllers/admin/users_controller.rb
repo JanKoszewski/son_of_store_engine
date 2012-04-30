@@ -5,9 +5,9 @@ class Admin::UsersController < Admin::ApplicationController
   end
 
   def create
-    if @store.add_user(params[:email], params[:commit]) == "admin"
+    if @store.add_store_user(params[:email], params[:commit]) == "admin"
       notice = "New admin successfully added."
-    elsif @store.add_user(params[:email], params[:commit]) == "stocker"
+    elsif @store.add_store_user(params[:email], params[:commit]) == "stocker"
       notice = "New stocker successfully added."
     else
       @store.invite_new_user(params[:email])
