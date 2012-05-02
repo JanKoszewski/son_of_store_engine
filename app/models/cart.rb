@@ -13,6 +13,7 @@
 #  slug       :string(255)
 #
 
+
 # A cart is an order with state, and becomes an order on checkout.
 class Cart < Order
   def add_product_by_id(product_id)

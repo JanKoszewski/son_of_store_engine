@@ -17,8 +17,8 @@
 #  last_sign_in_ip        :string(255)
 #  created_at             :datetime        not null
 #  updated_at             :datetime        not null
-#  authentication_token   :string(255)
 #
+
 
 Fabricator(:user) do
   name { Faker::Name.name }

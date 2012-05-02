@@ -13,4 +13,5 @@
 #  slug       :string(255)
 #
 
+
 Fabricator(:cart)

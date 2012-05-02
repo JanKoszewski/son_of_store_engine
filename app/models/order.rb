@@ -14,6 +14,7 @@
 #
 
 
+
 # An order is created when a user checks out with products
 class Order < ActiveRecord::Base
   attr_accessible :user_id,
@@ -85,7 +86,13 @@ class Order < ActiveRecord::Base
   end
 
   def update_with_billing_information(billing_data)
+    
+    Address.create(billing_data[:billing_address])
+    Address.create(billing_data[:shipping_address])
+    CreditCard.create(billing_data[:credit_card])
+    
     update_attributes(billing_data[:order])
+
 
     Address.create_multiple([
       billing_data[:billing_address],
